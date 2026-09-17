@@ -8,6 +8,13 @@ public class PlayerCombat : MonoBehaviour
 
     public LayerMask enemyLayer;
 
+    private CameraFollow cameraFollow;
+
+    private void Awake()
+    {
+        cameraFollow = Camera.main.GetComponent<CameraFollow>();
+    }
+
     public void HitAttack()
     {
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
@@ -16,6 +23,8 @@ public class PlayerCombat : MonoBehaviour
             enemyLayer
         );
 
+        bool hitSuccess = false;
+
         foreach (Collider2D enemy in hitEnemies)
         {
             EnemyHealth enemyHealth = enemy.GetComponent<EnemyHealth>();
@@ -23,7 +32,15 @@ public class PlayerCombat : MonoBehaviour
             if (enemyHealth != null)
             {
                 enemyHealth.TakeDamage(attackDamage);
+                hitSuccess = true;
             }
+        }
+
+        if (hitSuccess)
+        {
+            HitStopManager.Instance.Stop(0.05f);
+
+            cameraFollow.Shake(0.08f, 0.05f);
         }
     }
 

@@ -13,6 +13,10 @@ public class CameraFollow : MonoBehaviour
     public float mapMinY = -10f;
     public float mapMaxY = 10f;
 
+    //카메라 흔들림
+    private float shakeDuration = 0f;
+    private float shakeStrength = 0f;
+
     private Vector3 velocity = Vector3.zero;
     private Camera cam;
     private void Awake()
@@ -75,11 +79,28 @@ public class CameraFollow : MonoBehaviour
         );
 
         // 목표 위치까지 부드럽게 이동
-        transform.position = Vector3.SmoothDamp(
+        Vector3 newPosition = transform.position = Vector3.SmoothDamp(
             transform.position,
             targetPosition,
             ref velocity,
             smoothTime
         );
+
+        if (shakeDuration > 0f)
+        {
+            Vector2 shakeOffset = Random.insideUnitCircle * shakeStrength;
+
+            newPosition.x += shakeOffset.x;
+            newPosition.y += shakeOffset.y;
+
+            shakeDuration -= Time.unscaledDeltaTime;
+        }
+
+        transform.position = newPosition;
+    }
+    public void Shake(float duration, float strength)
+    {
+        shakeDuration = duration;
+        shakeStrength = strength;
     }
 }
