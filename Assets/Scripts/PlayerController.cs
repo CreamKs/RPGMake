@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
     private float attackPointX;
     private bool isAttacking = false;
 
+    private PlayerHealth playerHealth;
+
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -35,6 +37,7 @@ public class PlayerController : MonoBehaviour
         animator = GetComponentInChildren<Animator>();
         visual = transform.Find("Visual");
         attackPointX = Mathf.Abs(attackPoint.localPosition.x);
+        playerHealth = GetComponent<PlayerHealth>();
     }
 
     private void OnEnable()
@@ -49,6 +52,20 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (playerHealth != null && playerHealth.IsDead)
+        {
+            moveInput = Vector2.zero;
+            animator.SetFloat("Speed", 0f);
+            return;
+        }
+        if (playerHealth != null && playerHealth.IsHit)
+        {
+            moveInput = Vector2.zero;
+            animator.SetFloat("Speed", 0f);
+            return;
+        }
+     
+
         // ÁÂ¿ì ÀÌµ¿ ÀÔ·ÂÀ» ¹Þ¾Æ¿È
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         
@@ -99,6 +116,20 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (playerHealth != null && playerHealth.IsDead)
+        {
+            rb.linearVelocity = new Vector2(
+                0f,
+                rb.linearVelocity.y
+            );
+
+            return;
+        }
+        if (playerHealth != null && playerHealth.IsHit)
+        {
+            return;
+        }
+
         rb.linearVelocity = new Vector2(
             moveInput.x * moveSpeed,
             rb.linearVelocity.y

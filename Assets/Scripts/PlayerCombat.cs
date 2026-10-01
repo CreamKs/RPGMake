@@ -10,13 +10,21 @@ public class PlayerCombat : MonoBehaviour
 
     private CameraFollow cameraFollow;
 
+    private PlayerHealth playerHealth;
+
     private void Awake()
     {
         cameraFollow = Camera.main.GetComponent<CameraFollow>();
+        playerHealth = GetComponent<PlayerHealth>();
     }
 
     public void HitAttack()
     {
+        if (playerHealth != null && playerHealth.IsDead)
+        {
+            return;
+        }
+
         Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(
             attackPoint.position,
             attackRadius,
@@ -31,7 +39,7 @@ public class PlayerCombat : MonoBehaviour
 
             if (enemyHealth != null)
             {
-                enemyHealth.TakeDamage(attackDamage);
+                enemyHealth.TakeDamage(attackDamage, (Vector2)transform.position);
                 hitSuccess = true;
             }
         }

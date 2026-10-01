@@ -1,76 +1,84 @@
+using UnityEngine.SceneManagement;
 using System.Collections;
 using UnityEngine;
 
-public class EnemyHealth : MonoBehaviour
+public class PlayerHealth : MonoBehaviour
 {
-    public int maxHealth = 100;
-    private int currentHealth;
-
-    public GameObject damagePopupPrefab;
-    public Transform damagePopupPoint;
-
-    private bool isDead = false;
-    public bool IsDead => isDead;
+    [SerializeField] private int maxHealth = 100;
+    [SerializeField] private float invincibleDuration = 0.7f;
     [SerializeField] private Color hitColor = Color.red;
     [SerializeField] private float hitFlashDuration = 0.1f;
     [SerializeField] private float knockbackSpeed = 4f;
-    [SerializeField] private float knockbackUpSpeed = 2f;
     [SerializeField] private float hitDuration = 0.2f;
 
+    [SerializeField] private float restartDelay = 2f;
 
-
+    private int currentHealth;
+    private float nextDamageTime;
     private SpriteRenderer spriteRenderer;
     private Color originalColor;
     private Coroutine hitFlashCoroutine;
-    private Rigidbody2D rb;
     
+    private Rigidbody2D rb;
     private Coroutine knockbackCoroutine;
+
+    private Animator animator;
+    private PlayerController playerController;
+
     public bool IsHit { get; private set; }
+
+    public bool IsDead => currentHealth <= 0;
 
     private void Awake()
     {
         currentHealth = maxHealth;
-        
+
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
 
         if (spriteRenderer != null)
         {
             originalColor = spriteRenderer.color;
+
+            rb = GetComponent<Rigidbody2D>();
         }
-        rb = GetComponent<Rigidbody2D>();
+        animator = GetComponentInChildren<Animator>();
+        playerController = GetComponent<PlayerController>();
     }
 
     public void TakeDamage(int damage, Vector2 attackerPosition)
     {
-        // 이미 죽은 적이면 데미지를 받지 않는다.
-        if (isDead)
+        if (IsDead || damage <= 0)
         {
             return;
         }
 
-        currentHealth -= damage;
+        if (Time.time < nextDamageTime)
+        {
+            return;
+        }
+
+        currentHealth = Mathf.Max(
+            0,
+            currentHealth - damage
+        );
+
+        nextDamageTime = Time.time + invincibleDuration;
         PlayHitFlash();
         ApplyKnockback(attackerPosition);
 
         Debug.Log(
-            $"{gameObject.name} 데미지: {damage}, 남은 HP: {currentHealth}"
+            $"플레이어 피격: {damage}, 남은 체력: {currentHealth}"
         );
 
-        GameObject popup = Instantiate(
-            damagePopupPrefab,
-            damagePopupPoint.position,
-            Quaternion.identity
-        );
-
-        popup.GetComponent<DamagePopup>().Setup(damage);
-
-        // HP가 0 이하라면 사망
-        if (currentHealth <= 0)
+        if (IsDead)
         {
             Die();
         }
+        else if (animator != null)
+        {
+            animator.SetTrigger("Hit");
+        }
     }
-
     private void PlayHitFlash()
     {
         if (spriteRenderer == null)
@@ -121,7 +129,7 @@ public class EnemyHealth : MonoBehaviour
 
         rb.linearVelocity = new Vector2(
             direction * knockbackSpeed,
-            knockbackUpSpeed
+            rb.linearVelocity.y
         );
 
         yield return new WaitForSeconds(hitDuration);
@@ -137,17 +145,42 @@ public class EnemyHealth : MonoBehaviour
 
     private void Die()
     {
-        isDead = true;
-
-        Debug.Log($"{gameObject.name} 사망");
-
-        Collider2D enemyCollider = GetComponent<Collider2D>();
-
-        if (enemyCollider != null)
+        if (animator != null)
         {
-            enemyCollider.enabled = false;
+            animator.ResetTrigger("Hit");
+            animator.ResetTrigger("Attack");
+            animator.SetBool("IsDead", true);
         }
 
-        Destroy(gameObject, 1f);
+        Debug.Log("플레이어 사망");
+
+        if (knockbackCoroutine != null)
+        {
+            StopCoroutine(knockbackCoroutine);
+            knockbackCoroutine = null;
+        }
+
+        IsHit = false;
+
+        if (rb != null)
+        {
+            rb.linearVelocity = new Vector2(
+                0f,
+                rb.linearVelocity.y
+            );
+        }
+
+        StartCoroutine(RestartScene());
+    }
+
+    private IEnumerator RestartScene()
+    {
+        yield return new WaitForSecondsRealtime(restartDelay);
+
+        Time.timeScale = 1f;
+
+        SceneManager.LoadScene(
+            SceneManager.GetActiveScene().buildIndex
+        );
     }
 }
