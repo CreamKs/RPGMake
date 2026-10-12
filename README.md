@@ -49,7 +49,11 @@ Unity 6와 C#으로 제작 중인 Windows PC용 2D 횡스크롤 싱글 액션 RP
 
 현재 프로토타입은 전사 캐릭터를 기준으로 제작하고 있습니다.
 
-## 현재 구현 상태 - Week 02
+## 현재 구현 상태 - Week 04
+
+3·4주차는 개인 사정으로 조정된 일정에 따라 4주차에 함께 진행했습니다.
+아래 내용은 로컬 Unity 프로젝트와 Windows 테스트 빌드에서 확인한 구현 상태이며,
+3·4주차 코드와 씬·프리팹 변경은 아직 저장소에 반영하지 않았습니다.
 
 ### Player
 
@@ -64,6 +68,7 @@ Unity 6와 C#으로 제작 중인 Windows PC용 2D 횡스크롤 싱글 액션 RP
 - 피격 시 색 변화와 가로 넉백
 - 사망 시 조작과 공격 판정 차단
 - 사망 2초 후 테스트 장면 재시작
+- Visual, AttackPoint와 GroundCheck를 포함한 Player 프리팹
 
 ### Enemy
 
@@ -74,6 +79,8 @@ Unity 6와 C#으로 제작 중인 Windows PC용 2D 횡스크롤 싱글 액션 RP
 - 몸체 충돌과 플레이어 접촉 감지 영역 분리
 - 플레이어 접촉 피해
 - HP가 0 이하가 되면 추적과 접촉 피해 중단 후 제거
+- 몬스터 프리팹과 실행 시 플레이어 추적 대상 자동 연결
+- Rigidbody2D의 Z 회전 고정
 
 ### Combat
 
@@ -85,6 +92,7 @@ Unity 6와 C#으로 제작 중인 Windows PC용 2D 횡스크롤 싱글 액션 RP
 - 실험용 Hit Slow
 - 공격 적중 시 Screen Shake
 - 여러 몬스터를 대상으로 한 전투 검증
+- 공격 중 피격 후 다음 공격이 차단되는 문제 수정
 
 ### Camera
 
@@ -93,6 +101,18 @@ Unity 6와 C#으로 제작 중인 Windows PC용 2D 횡스크롤 싱글 액션 RP
 - 맵 경계 Clamp
 - 점프 시 카메라가 과도하게 따라가지 않도록 Vertical Dead Zone
 - 공격 적중 시 짧은 Screen Shake
+- Pixel Perfect Camera 적용 및 이동 중 도트 표시 검증
+
+### Map
+
+- Tilemap과 Tile Palette를 이용한 테스트 지형 제작
+- Tilemap Collider 2D와 Composite Collider 2D를 이용한 지형 충돌
+- 기존 원웨이 플랫폼과 아래 점프를 새 맵에서 검증
+
+### 테스트 빌드
+
+- Windows 실행 파일 제작
+- 실행 파일에서 이동, 점프, 공격, 피격, 사망과 장면 재시작 확인
 
 ## 현재 플레이 루프
 
@@ -123,7 +143,8 @@ Assets/
 ├─ Prefabs/
 ├─ Scenes/
 ├─ Scripts/
-└─ Sprites/
+├─ Sprites/
+└─ Tiles/
 ```
 
 현재 Player의 주요 Hierarchy 구조는 다음과 같습니다.
@@ -147,6 +168,8 @@ Player
 
 - [Week 01 - 기본 조작 및 전투 프로토타입](Docs/DevLog/Week01.md)
 - [Week 02 - 몬스터 추적과 상호 전투](Docs/DevLog/Week02.md)
+- [Week 03 - 타일맵 테스트 맵과 카메라 검증](Docs/DevLog/Week03.md)
+- [Week 04 - 프리팹 정리와 첫 Windows 테스트 빌드](Docs/DevLog/Week04.md)
 
 ## 개발 방향
 
