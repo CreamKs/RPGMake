@@ -24,6 +24,7 @@ public class PlayerController : MonoBehaviour
     public Transform attackPoint;
     private float attackPointX;
     private bool isAttacking = false;
+    public bool IsAttacking => isAttacking;
 
     private PlayerHealth playerHealth;
 

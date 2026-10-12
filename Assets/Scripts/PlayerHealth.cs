@@ -74,7 +74,8 @@ public class PlayerHealth : MonoBehaviour
         {
             Die();
         }
-        else if (animator != null)
+        else if (animator != null &&
+                 (playerController == null || !playerController.IsAttacking))
         {
             animator.SetTrigger("Hit");
         }
