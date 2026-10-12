@@ -249,7 +249,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &18175280
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -577,7 +577,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 2
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -622,7 +622,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
   target: {fileID: 204643675}
   smoothTime: 0.3
-  verticalDeadZone: 1
+  verticalDeadZone: 0
   mapMinX: -10
   mapMaxX: 10
   mapMinY: -10
@@ -890,7 +890,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &917971273
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2791,7 +2791,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 4
 --- !u!114 &1932966924
 MonoBehaviour:
   m_ObjectHideFlags: 0
