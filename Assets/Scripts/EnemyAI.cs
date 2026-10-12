@@ -23,7 +23,29 @@ public class EnemyAI : MonoBehaviour
 
         originalVisualScale = visual.localScale;
     }
+    private void Start()
+    {
+        // 이미 연결된 대상이 있으면 유지한다.
+        if (target != null)
+        {
+            return;
+        }
 
+        PlayerController player =
+            FindFirstObjectByType<PlayerController>();
+
+        if (player != null)
+        {
+            target = player.transform;
+        }
+        else
+        {
+            Debug.LogWarning(
+                "몬스터가 추적할 플레이어를 찾지 못했습니다.",
+                this
+            );
+        }
+    }
     private void FixedUpdate()
     {
 
